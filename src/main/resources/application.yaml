@@ -1,0 +1,38 @@
+server:
+  port: ${port:8080}
+spring:
+  application:
+    name: shipping
+  zipkin:
+    base-url: http://${zipkin_host:zipkin}:9411/
+    enabled: ${zipkin_enabled:false}
+  sleuth:
+    sampler:
+      probability: 1.0
+  rabbitmq:
+    host: ${rabbitmq_host:127.0.0.1}
+    port: 5672
+    username: ${rabbitmq_username:guest}
+    password: ${rabbitmq_password:guest}
+management:
+  endpoint:
+    health:
+      enabled: false
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+        - '*'
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+        
+shipping:
+  rabbitmq:
+    queue: ${shipping_queue:shipping-task}
+    topicexchange: ${shipping_exchange:shipping-task-exchange}

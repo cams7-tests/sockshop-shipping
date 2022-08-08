@@ -24,18 +24,17 @@ public class ShippingController {
     RabbitTemplate rabbitTemplate;
 
     @RequestMapping(value = "/shipping", method = RequestMethod.GET)
-    public String getShipping() {
+    String getShipping() {
         return "GET ALL Shipping Resource.";
     }
 
     @RequestMapping(value = "/shipping/{id}", method = RequestMethod.GET)
-    public String getShippingById(@PathVariable String id) {
+    String getShippingById(@PathVariable String id) {
         return "GET Shipping Resource with id: " + id;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @RequestMapping(value = "/shipping", method = RequestMethod.POST)
-    public
     @ResponseBody
     Shipment postShipping(@RequestBody Shipment shipment) {
         System.out.println("Adding shipment to queue...");
@@ -50,7 +49,6 @@ public class ShippingController {
 
     @ResponseStatus(HttpStatus.OK)
     @RequestMapping(method = RequestMethod.GET, path = "/health")
-    public
     @ResponseBody
     Map<String, List<HealthCheck>> getHealth() {
         Map<String, List<HealthCheck>> map = new HashMap<String, List<HealthCheck>>();
