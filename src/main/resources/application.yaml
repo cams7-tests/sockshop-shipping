@@ -1,14 +1,17 @@
 server:
   port: ${port:8080}
+  error:
+    include-message: ALWAYS
+    include-stacktrace: NEVER
 spring:
   application:
     name: shipping
-  zipkin:
-    base-url: http://${zipkin_host:zipkin}:9411/
-    enabled: ${zipkin_enabled:false}
-  sleuth:
-    sampler:
-      probability: 1.0
+#  zipkin:
+#    base-url: http://${zipkin_host:zipkin}:9411/
+#    enabled: ${zipkin_enabled:false}
+#  sleuth:
+#    sampler:
+#      probability: 1.0
   rabbitmq:
     host: ${rabbitmq_host:127.0.0.1}
     port: 5672
@@ -31,6 +34,10 @@ management:
     export:
       prometheus:
         enabled: true
+
+springdoc:
+  api-docs:
+    path: /api-docs
         
 shipping:
   rabbitmq:

@@ -1,61 +1,16 @@
 package works.weave.socks.shipping.entities;
 
-import java.util.UUID;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
 public class Shipment {
-    private String id;
-    private String name;
 
-    public Shipment() {
-        this("");
-    }
+  @Schema(example = "151d6260-1854-49fb-9afe-ba5c5969aef5", description = "Shipment id")
+  private String id;
 
-    public Shipment(String name) {
-        this(UUID.randomUUID().toString(), name);
-    }
-
-    public Shipment(String id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Shipment{" +
-                "id='" + id + '\'' +
-                ", name='" + name + '\'' +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Shipment shipment = (Shipment) o;
-
-        return getId() != null ? getId().equals(shipment.getId()) : shipment.getId() == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        return getId() != null ? getId().hashCode() : 0;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
+  @Schema(example = "57a98d98e4b00679b4a830b2", description = "Customer id")
+  private String name;
 }

@@ -1,59 +1,27 @@
 package works.weave.socks.shipping.entities;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import java.time.LocalDateTime;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Calendar;
-import java.util.Date;
-
-@JsonIgnoreProperties(ignoreUnknown = true)
+@Data
+@NoArgsConstructor
 public class HealthCheck {
-   private String service;
-   private String status;
 
-   @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSSXXX")
-   private Date date = Calendar.getInstance().getTime();
+  @Schema(example = "orders-db", description = "Health check service")
+  private String service;
 
-   public HealthCheck() {
+  @Schema(example = "OK", description = "Health check status")
+  private String status;
 
-   }
+  @Schema(example = "2022-08-23T18:32:25.829596", description = "Health check datetime")
+  private LocalDateTime date;
 
-   public HealthCheck(String service, String status, Date date) {
-      this.service = service;
-      this.status = status;
-      this.date = date;
+  public HealthCheck(String service, String status) {
+    this();
+    this.service = service;
+    this.status = status;
+    this.date = LocalDateTime.now();
   }
-
-   @Override
-   public String toString() {
-      return "HealthCheck{" +
-               "service='" + service + '\'' +
-               ", status='" + status + '\'' +
-               ", date='" + date +
-               '}';
-   }
-
-   public String getService() {
-      return service;
-   }
-
-   public void setService(String service) {
-      this.service = service;
-   }
-
-   public String getStatus() {
-      return status;
-   }
-
-   public void setStatus(String status) {
-      this.status = status;
-   }
-
-   public Date getDate() {
-      return date;
-   }
-
-   public void setDate(Date date) {
-      this.date = date;
-   }
 }

@@ -1,79 +1,48 @@
 package works.weave.socks.shipping.controllers;
 
-import com.rabbitmq.client.Channel;
-import org.springframework.amqp.AmqpException;
-import org.springframework.amqp.rabbit.core.ChannelCallback;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-import works.weave.socks.shipping.entities.HealthCheck;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 import works.weave.socks.shipping.entities.Shipment;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@Tag(name = "Shipping Service")
+@RequiredArgsConstructor
+@Log4j2
 @RestController
+@RequestMapping(path = "/shipping")
 public class ShippingController {
 
-    @Autowired
-    RabbitTemplate rabbitTemplate;
+  @Value("${shipping.rabbitmq.queue}")
+  private String queueName;
 
-    @RequestMapping(value = "/shipping", method = RequestMethod.GET)
-    String getShipping() {
-        return "GET ALL Shipping Resource.";
+  private final RabbitTemplate rabbitTemplate;
+
+  @Operation(description = "Add shipment to RabbitMQ queue")
+  @ApiResponses({@ApiResponse(responseCode = "201", description = "Created")})
+  @ResponseStatus(CREATED)
+  @PostMapping(produces = APPLICATION_JSON_VALUE)
+  Shipment addShipment(@RequestBody Shipment shipment) {
+    log.info("Adding shipment to queue...");
+    try {
+      rabbitTemplate.convertAndSend(queueName, shipment);
+    } catch (Exception e) {
+      log.error(
+          "Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this for real!",
+          e);
     }
-
-    @RequestMapping(value = "/shipping/{id}", method = RequestMethod.GET)
-    String getShippingById(@PathVariable String id) {
-        return "GET Shipping Resource with id: " + id;
-    }
-
-    @ResponseStatus(HttpStatus.CREATED)
-    @RequestMapping(value = "/shipping", method = RequestMethod.POST)
-    @ResponseBody
-    Shipment postShipping(@RequestBody Shipment shipment) {
-        System.out.println("Adding shipment to queue...");
-        try {
-            rabbitTemplate.convertAndSend("shipping-task", shipment);
-        } catch (Exception e) {
-            System.out.println("Unable to add to queue (the queue is probably down). Accepting anyway. Don't do this " +
-                    "for real!");
-        }
-        return shipment;
-    }
-
-    @ResponseStatus(HttpStatus.OK)
-    @RequestMapping(method = RequestMethod.GET, path = "/health")
-    @ResponseBody
-    Map<String, List<HealthCheck>> getHealth() {
-        Map<String, List<HealthCheck>> map = new HashMap<String, List<HealthCheck>>();
-        List<HealthCheck> healthChecks = new ArrayList<HealthCheck>();
-        Date dateNow = Calendar.getInstance().getTime();
-
-        HealthCheck rabbitmq = new HealthCheck("shipping-rabbitmq", "OK", dateNow);
-        HealthCheck app = new HealthCheck("shipping", "OK", dateNow);
-
-        try {
-            this.rabbitTemplate.execute(new ChannelCallback<String>() {
-                @Override
-                public String doInRabbit(Channel channel) throws Exception {
-                    Map<String, Object> serverProperties = channel.getConnection().getServerProperties();
-                    return serverProperties.get("version").toString();
-                }
-            });
-        } catch ( AmqpException e ) {
-            rabbitmq.setStatus("err");
-        }
-
-        healthChecks.add(rabbitmq);
-        healthChecks.add(app);
-
-        map.put("health", healthChecks);
-        return map;
-    }
+    return shipment;
+  }
 }

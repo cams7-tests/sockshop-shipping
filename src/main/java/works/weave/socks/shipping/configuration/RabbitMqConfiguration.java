@@ -14,47 +14,44 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
-
 @Configuration
 public class RabbitMqConfiguration {
-    
-    @Value("${shipping.rabbitmq.queue}")
-	private String queueName;
-    
-    @Value("${shipping.rabbitmq.topicexchange}")
-	private String topicExchangeName;
 
+  @Value("${shipping.rabbitmq.queue}")
+  private String queueName;
 
-    @Bean
-    AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
-        return new RabbitAdmin(connectionFactory);
-    }
+  @Value("${shipping.rabbitmq.topicexchange}")
+  private String topicExchangeName;
 
-    @Bean
-    MessageConverter jsonMessageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
+  @Bean
+  AmqpAdmin amqpAdmin(ConnectionFactory connectionFactory) {
+    return new RabbitAdmin(connectionFactory);
+  }
 
-    @Bean
-    RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
-        RabbitTemplate template = new RabbitTemplate(connectionFactory);
-        template.setMessageConverter(jsonMessageConverter());
-        return template;
-    }
+  @Bean
+  MessageConverter jsonMessageConverter() {
+    return new Jackson2JsonMessageConverter();
+  }
 
-    @Bean
-    Queue queue() {
-        return new Queue(queueName, false);
-    }
+  @Bean
+  RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
+    RabbitTemplate template = new RabbitTemplate(connectionFactory);
+    template.setMessageConverter(jsonMessageConverter());
+    return template;
+  }
 
-    @Bean
-    TopicExchange exchange() {
-        return new TopicExchange(topicExchangeName);
-    }
+  @Bean
+  Queue queue() {
+    return new Queue(queueName, false);
+  }
 
-    @Bean
-    Binding binding(Queue queue, TopicExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(queueName);
-    }
+  @Bean
+  TopicExchange exchange() {
+    return new TopicExchange(topicExchangeName);
+  }
+
+  @Bean
+  Binding binding(Queue queue, TopicExchange exchange) {
+    return BindingBuilder.bind(queue).to(exchange).with(queueName);
+  }
 }
