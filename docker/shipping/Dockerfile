@@ -15,10 +15,10 @@ LABEL org.label-schema.vendor="Weaveworks" \
   org.label-schema.version="${BUILD_VERSION}" \
   org.label-schema.name="Socks Shop: Shipping" \
   org.label-schema.description="REST API for Shipping service" \
-  org.label-schema.url="https://github.com/microservices-demo/shipping" \
-  org.label-schema.vcs-url="github.com:microservices-demo/shipping.git" \
+  org.label-schema.url="https://github.com/cams7-tests/sockshop-shipping" \
+  org.label-schema.vcs-url="github.com/cams7-tests/sockshop-shipping.git" \
   org.label-schema.vcs-ref="${COMMIT}" \
-  org.label-schema.schema-version="1.0"
+  org.label-schema.schema-version="1.0.1"
 
 EXPOSE 80
 

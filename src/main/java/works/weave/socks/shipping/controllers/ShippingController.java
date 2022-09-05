@@ -33,7 +33,7 @@ public class ShippingController {
   @Operation(description = "Add shipment to RabbitMQ queue")
   @ApiResponses({@ApiResponse(responseCode = "201", description = "Created")})
   @ResponseStatus(CREATED)
-  @PostMapping(produces = APPLICATION_JSON_VALUE)
+  @PostMapping(consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
   Shipment addShipment(@RequestBody Shipment shipment) {
     log.info("Adding shipment to queue...");
     try {
